@@ -6,18 +6,17 @@ module Lib
 import           Data.List       (intercalate, transpose)
 import           Data.List.Split (chunksOf)
 
-getPrimes :: Int -> Int -> [[Integer]]
-getPrimes totalCount pageSize = formattedPages
+getPrimes :: Int -> Int -> Int -> [[Integer]]
+getPrimes totalCount pageSize numColumns = formattedPages
   where
     rawPages       = chunksOf pageSize $ take totalCount primes
     formattedPages = concatMap (formatPage n) rawPages
     n              = pageSize `div` numColumns
-    numColumns     = totalCount `div` pageSize
 
-getPrimesString :: Int -> Int -> String
-getPrimesString totalCount pageSize = formatOutput nums totalCount pageSize
+getPrimesString :: Int -> Int -> Int -> String
+getPrimesString totalCount pageSize numColumns = formatOutput nums totalCount pageSize numColumns
   where
-    nums       = getPrimes totalCount pageSize
+    nums       = getPrimes totalCount pageSize numColumns
 
 -- infinite stream of primes
 -- stolen from https://stackoverflow.com/a/3596536/2899222
@@ -30,18 +29,14 @@ primes = sieve [2..]
 formatPage :: Int -> [Integer] -> [[Integer]]
 formatPage chunkSize page = transpose $ chunksOf chunkSize page
 
-formatOutput :: [[Integer]] -> Int -> Int -> String
-formatOutput nums totalCount pageSize = concat $ zipWith (++) headers pages
+formatOutput :: [[Integer]] -> Int -> Int -> Int -> String
+formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers pages
   where
     lines        = fmap mkNumLine nums
     groupedLines = chunksOf chunkSize lines
-    pages        = fmap mkPage groupedLines
+    pages        = fmap concat groupedLines
     headers      = mkHeaderLines totalCount $ length groupedLines
-    numColumns   = totalCount `div` pageSize
     chunkSize    = pageSize `div` numColumns
-
-mkPage :: [String] -> String
-mkPage strs = concat strs
 
 mkNumLine :: Show a => [a] -> String
 mkNumLine as = intercalate ", " (fmap show as) ++ "\n"
