@@ -1,6 +1,6 @@
 module Main where
 
--- import Lib
+import           Lib (getPrimesString)
 
 main :: IO ()
-main = undefined
+main = putStr $ getPrimesString 1000 200
