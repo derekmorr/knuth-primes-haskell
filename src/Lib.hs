@@ -1,20 +1,23 @@
 module Lib
     ( getPrimes
-    , formatOutput
+    , getPrimesString
     ) where
 
 import           Data.List       (intercalate, transpose)
 import           Data.List.Split (chunksOf)
 
-getPrimes :: Int -> Int -> Int -> [[Integer]]
-getPrimes totalCount pageSize numColumns = formattedPages
+getPrimes :: Int -> Int -> [[Integer]]
+getPrimes totalCount pageSize = formattedPages
   where
     rawPages       = chunksOf pageSize $ take totalCount primes
     formattedPages = concatMap (formatPage n) rawPages
     n              = pageSize `div` numColumns
+    numColumns     = totalCount `div` pageSize
 
--- getPrimesString :: Int -> Int -> Int -> String
--- getPrimesString totalCount pageSize numColumns = formatOutput $ getPrimes totalCount pageSize numColumns
+getPrimesString :: Int -> Int -> String
+getPrimesString totalCount pageSize = formatOutput nums totalCount pageSize
+  where
+    nums       = getPrimes totalCount pageSize
 
 -- infinite stream of primes
 -- stolen from https://stackoverflow.com/a/3596536/2899222
@@ -27,13 +30,15 @@ primes = sieve [2..]
 formatPage :: Int -> [Integer] -> [[Integer]]
 formatPage chunkSize page = transpose $ chunksOf chunkSize page
 
-formatOutput :: [[Integer]] -> Int -> Int -> Int -> String
-formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers pages
+formatOutput :: [[Integer]] -> Int -> Int -> String
+formatOutput nums totalCount pageSize = concat $ zipWith (++) headers pages
   where
     lines        = fmap mkNumLine nums
-    groupedLines = chunksOf (pageSize `div` numColumns) lines
+    groupedLines = chunksOf chunkSize lines
     pages        = fmap mkPage groupedLines
     headers      = mkHeaderLines totalCount $ length groupedLines
+    numColumns   = totalCount `div` pageSize
+    chunkSize    = pageSize `div` numColumns
 
 mkPage :: [String] -> String
 mkPage strs = concat strs
