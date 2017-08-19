@@ -25,9 +25,9 @@ mkColumns chunkSize page = transpose $ chunksOf chunkSize page
 formatOutput :: Show a => [[[a]]] -> Int -> Int -> Int -> String
 formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers pages
   where
-    pages        = fmap concat lines'
-    lines'       = (fmap . fmap) mkNumLine nums
-    headers      = mkHeaderLines totalCount $ length lines'
+    pages    = (fmap . concatMap) mkNumLine nums
+    headers  = mkHeaderLines totalCount numPages
+    numPages = totalCount `div` pageSize
 
 mkNumLine :: Show a => [a] -> String
 mkNumLine as = intercalate ", " (fmap show as) ++ "\n"
