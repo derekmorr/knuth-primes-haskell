@@ -19,10 +19,10 @@ getPrimesString totalCount pageSize numColumns = formatOutput nums totalCount pa
   where
     nums = getPrimes totalCount pageSize numColumns
 
-mkColumns :: Int -> [Integer] -> [[Integer]]
+mkColumns :: Int -> [a] -> [[a]]
 mkColumns chunkSize page = transpose $ chunksOf chunkSize page
 
-formatOutput :: [[Integer]] -> Int -> Int -> Int -> String
+formatOutput :: Show a => [[a]] -> Int -> Int -> Int -> String
 formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers pages
   where
     pages        = fmap concat groupedLines
