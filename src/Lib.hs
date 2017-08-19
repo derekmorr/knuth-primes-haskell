@@ -28,7 +28,6 @@ formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers
     pages        = fmap concat lines'
     lines'       = (fmap . fmap) mkNumLine nums
     headers      = mkHeaderLines totalCount $ length lines'
-    chunkSize    = pageSize `div` numColumns
 
 mkNumLine :: Show a => [a] -> String
 mkNumLine as = intercalate ", " (fmap show as) ++ "\n"
