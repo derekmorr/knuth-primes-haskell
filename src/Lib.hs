@@ -3,8 +3,9 @@ module Lib
     , getPrimesString
     ) where
 
-import           Data.List       (intercalate, transpose)
-import           Data.List.Split (chunksOf)
+import           Data.List           (intercalate, transpose)
+import           Data.List.Split     (chunksOf)
+import           Data.Numbers.Primes (primes)
 
 getPrimes :: Int -> Int -> Int -> [[Integer]]
 getPrimes totalCount pageSize numColumns = formattedPages
@@ -17,13 +18,6 @@ getPrimesString :: Int -> Int -> Int -> String
 getPrimesString totalCount pageSize numColumns = formatOutput nums totalCount pageSize numColumns
   where
     nums = getPrimes totalCount pageSize numColumns
-
--- infinite stream of primes
--- stolen from https://stackoverflow.com/a/3596536/2899222
-primes :: [Integer]
-primes = sieve [2..]
-  where
-    sieve (p:xs) = p : sieve [x|x <- xs, x `mod` p > 0]
 
 mkColumns :: Int -> [Integer] -> [[Integer]]
 mkColumns chunkSize page = transpose $ chunksOf chunkSize page
