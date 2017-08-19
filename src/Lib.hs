@@ -15,19 +15,15 @@ getPrimes totalCount pageSize numColumns = formattedPages
     chunkSize      = pageSize `div` numColumns
 
 getPrimesString :: Int -> Int -> Int -> String
-getPrimesString totalCount pageSize numColumns = formatOutput nums totalCount pageSize numColumns
-  where
-    nums = getPrimes totalCount pageSize numColumns
-
-mkColumns :: Int -> [a] -> [[a]]
-mkColumns chunkSize page = transpose $ chunksOf chunkSize page
-
-formatOutput :: Show a => [[[a]]] -> Int -> Int -> Int -> String
-formatOutput nums totalCount pageSize numColumns = concat $ zipWith (++) headers pages
+getPrimesString totalCount pageSize numColumns = concat $ zipWith (++) headers pages
   where
     pages    = (fmap . concatMap) mkNumLine nums
     headers  = mkHeaderLines totalCount numPages
     numPages = totalCount `div` pageSize
+    nums     = getPrimes totalCount pageSize numColumns
+
+mkColumns :: Int -> [a] -> [[a]]
+mkColumns chunkSize page = transpose $ chunksOf chunkSize page
 
 mkNumLine :: Show a => [a] -> String
 mkNumLine as = intercalate ", " (fmap show as) ++ "\n"
